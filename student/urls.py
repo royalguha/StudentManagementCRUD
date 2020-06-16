@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from ajaxsubmit import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("",include('studmanage.urls')),
+    path("ajax",views.ajaxSubmit,name="ajax"),
+    
 ]

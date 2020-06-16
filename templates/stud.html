@@ -35,6 +35,12 @@
             </table>
         </div>
     </div>
+    <div class="row ">
+
+        <div class="col-md-12">
+            <div id="text" class="border border-white text-white">hi</div>
+        </div>
+    </div>
 </div>
 <div class="modal fade" id="kaka">
     <div class="modal-dialog">
@@ -70,15 +76,69 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <form  method="post" class="form-group">
+                <form id="form" class="form-group" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
                     {{form|crispy}}
-                    <button type="submit"  class="btn btn-primary text-white mt-1" >Submit</button>
+                    <button id="btn" type="submit"  class="btn btn-primary text-white mt-1" >Submit</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('btn').addEventListener('click', ajaxcall);
+    document.getElementById('form').addEventListener('submit', ajaxcall);
+
+    function ajaxcall(e){
+        e.preventDefault();
+        name = document.getElementsByName('name').value;
+        roll = document.getElementsByName('roll').value;
+        phone = document.getElementsByName('phone').value;
+        address = document.getElementsByName('address').value;
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+        
+        //alert(csrf);
+        //jsonf=JSON.stringify({"name":name,"roll":roll,"phone":phone,"address":address});
+        //jsonf={"name":name,"roll":roll,"phone":phone,"address":address};
+        //jsonf="name=name&roll=roll&phone=phone&address=address";
+        //jsonf="name="+name+"&roll="+roll+"&phone="+phone+"&address="+address;
+        formData = new FormData(document.forms.form);
+        
+        xhttp=new XMLHttpRequest();
+        xhttp.open("POST","{% url 'ajax' %}",true);
+        //xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xhttp.setRequestHeader("X-CSRFToken",csrftoken);
+        xhttp.send(formData);
+        
+        
+        xhttp.onreadystatechange=function(){
+            if(this.readyState==4 && this.status==200){
+                
+               document.getElementById('text').innerHTML=JSON.parse(this.responseText).message;
+               //document.getElementById('text').innerHTML='connection ok';
+            }
+        };
+        
+        
+    }
+
+</script>
 </body>
 <!-- JS, Popper.js, and jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
